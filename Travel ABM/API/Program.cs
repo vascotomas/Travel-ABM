@@ -1,4 +1,5 @@
 using API;
+using Application.Cliente;
 using Application.GestorReservas;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,12 @@ var configuration = builder.Configuration;
 
 //DbContext
 builder.Services.AddDbContext<TravelContext>(optionsAction: options => options.UseSqlServer(configuration.GetConnectionString("default")));
-//Singletons
+//Scoped
 builder.Services.AddScoped<IGestorReservasService, GestorReservasService>();
 builder.Services.AddScoped<IGestorReservaRepository, GestorReservaRepository>();
+
+builder.Services.AddScoped<IClienteService, ClienteService>();
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 
 
 var app = builder.Build();

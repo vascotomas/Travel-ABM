@@ -16,35 +16,11 @@ namespace Application.GestorReservas
         {
             _reservaRepository = reserva;
         }
-        public async Task<List<Reserva>> ObtenerTodasLasReservas()
-        {
-            return await _reservaRepository.ObtenerTodasLasReservas();
-        }
-
-        public async Task<bool> EliminarReserva(int reservaId)
-        {
-            throw new NotImplementedException();
-
-            //_reservaRepository.EliminarReserva(reservaId);
-        }
-
-        public async Task<List<Tour>> ObtenerTodosLosTours()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task AgregarTour(Tour tour)
-        {
-            return _reservaRepository.AgregarTour(tour);
-        }
-
-        public async Task ReservarTour(int tourId, int idCliente, DateTime fechaReserva) => await _reservaRepository.
-                                                                                                   AgregarReserva(new Reserva
-                                                                                                   {
-                                                                                                       TourId = tourId,
-                                                                                                       IdCliente = idCliente,
-                                                                                                       FechaReserva = fechaReserva
-                                                                                                   });
+        public async Task<List<Reserva>> ObtenerReservas() => await _reservaRepository.ObtenerReservas();
+        public async Task EliminarReserva(int reservaId) => await _reservaRepository.EliminarReserva(reservaId);
+        public async Task<List<Tour>> ObtenerTours() => await _reservaRepository.ObtenerTours();
+        public async Task AgregarTour(Tour tour) => await _reservaRepository.AgregarTour(tour);
+        public async Task ReservarTour(Reserva reserva) => await _reservaRepository.AgregarReserva(reserva);
     }
 
 }

@@ -16,7 +16,7 @@ namespace Infrastructure
         public async Task<Reserva> ObtenerReservaPorId(int reservaId) => await _context.Reserva.FirstOrDefaultAsync(r => r.Id == reservaId);
 
 
-        public async Task<List<Reserva>> ObtenerTodasLasReservas() => await _context.Reserva.ToListAsync();
+        public async Task<List<Reserva>> ObtenerReservas() => await _context.Reserva.ToListAsync();
 
 
         public async Task AgregarReserva(Reserva reserva)
@@ -33,6 +33,8 @@ namespace Infrastructure
         }
 
         public async Task AgregarTour(Tour tour) => await _context.Tour.AddAsync(tour);
+
+        public async Task<List<Tour>> ObtenerTours()=> await _context.Tour.ToListAsync(); 
 
         /*public async Task<bool> GuardarCambiosAsync()
         {

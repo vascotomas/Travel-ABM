@@ -9,10 +9,10 @@ namespace Application.GestorReservas
 {
     public interface IGestorReservasService
     {
-        Task<List<Tour>> ObtenerTodosLosTours();
+        Task<List<Tour>> ObtenerTours();
         Task AgregarTour(Tour tour);
-        Task<List<Tour>> ObtenerTodasLasReservas();
-        Task ReservarTour(int tourId, int idCliente, DateTime fechaReserva);
+        Task<List<Reserva>> ObtenerReservas();
+        Task ReservarTour(Reserva reserva);
         Task EliminarReserva(int reservaId);
     }
 }
