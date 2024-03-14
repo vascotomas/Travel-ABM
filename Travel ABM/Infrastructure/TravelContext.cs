@@ -16,6 +16,7 @@ namespace Infrastructure
         public DbSet<Tour> Tour { get; set; }
         public DbSet<Reserva> Reserva { get; set; }
         public DbSet<Cliente> Cliente { get; set; }
+        public DbSet<Usuario> Usuario { get; set; }
 
     }
 }

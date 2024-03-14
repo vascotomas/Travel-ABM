@@ -1,6 +1,9 @@
 ﻿using Application.Cliente;
+using Application.DTO_s;
 using Application.GestorReservas;
 using Domain;
+using Microsoft.AspNetCore.Mvc;
+using Services.LoginService;
 
 namespace API
 {
@@ -14,7 +17,7 @@ namespace API
             application.MapGet(pattern: "/Reserva", ObtenerReservas);
             application.MapDelete(pattern: "/Reserva", EliminarReserva);
         }
-
+        #region endpoints GeneraReserva
         private static async Task<IResult> AgregarTour(Tour tour, IGestorReservasService service)
         {
             try
@@ -64,7 +67,7 @@ namespace API
                 return Results.Problem(ex.Message);
             }
         }
-        private static async Task<IResult> EliminarReserva(IGestorReservasService service,int reservaId)
+        private static async Task<IResult> EliminarReserva(IGestorReservasService service, int reservaId)
         {
             try
             {
@@ -76,5 +79,52 @@ namespace API
                 return Results.Problem(ex.Message);
             }
         }
+        #endregion
+
+        #region login
+        [HttpPost("authenticate")]
+        public static async Task<IResult> Login(ILoginService service, UserCrudDto userDto) 
+        {
+            var user = await service.Get(userDto);
+
+            if (user == null)
+                return Results.BadRequest(new { message = "Credenciales Incorrectas" });
+
+            string jwtToken = await service.GenerateToken(user);
+            return Results.Ok(new { token = jwtToken });
+        }
+
+        [HttpPost("forgot-password")]
+        public static async Task<IResult> ForgotPassword(ILoginService service,string email)
+        {
+            bool stateReset = await service.ForgotPassword(email);
+
+            if (!stateReset)            
+                return Results.BadRequest("Email incorrecto");
+            
+            return Results.Ok();
+        }
+
+        [HttpPost("reset-password")]
+        public static async Task<IResult> ResetPassword(ILoginService service,ResetPasswordRequestDto request)
+        {
+            if (await service.ResetPassword(request))
+                return Results.Ok();
+
+            return Results.BadRequest();
+        }
+
+        [HttpPost("login")]
+        public static async Task<IResult> Login(ILoginService service,string username, string password)
+        {
+            var loginResult = await service.Login(new UserCrudDto { UserName = username, Password = password });
+
+            if (loginResult.Item1 == false)
+                return Results.BadRequest(loginResult.Item2);
+
+            return Results.Ok(loginResult.Item2);
+
+        }
+        #endregion
     }
 }

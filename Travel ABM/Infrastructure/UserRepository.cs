@@ -1,0 +1,39 @@
+﻿
+using Application.User;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Domain;
+using Microsoft.EntityFrameworkCore;
+
+namespace Infrastructure
+{
+    public class UserRepository : IUserRepository
+    {
+        private readonly TravelContext _context;
+
+        public UserRepository(TravelContext context)
+        {
+            _context = context;
+        }
+
+        public Task CrearUsuario(Usuario usuario)
+        {
+            _context.Usuario.Add(usuario);
+            return _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> SoftDelete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Usuario> Obtener(int id) => await _context.Usuario.FirstOrDefaultAsync(x => x.Id == id);
+
+
+        public async Task<List<Usuario>> ObtenerUsuarios() => _context.Usuario.ToList();
+
+    }
+}
