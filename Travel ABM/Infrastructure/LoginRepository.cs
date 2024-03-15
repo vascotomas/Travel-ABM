@@ -21,7 +21,7 @@ namespace Infrastructure
             _context = context;
         }
 
-        public async Task<Usuario> Get(UserCrudDto user) => await _context.Usuario.SingleOrDefaultAsync(x => x.UserName == user.UserName && x.Password == user.Password || x.Email == user.Email);
+        public async Task<Usuario> Get(UserDto user) => await _context.Usuario.SingleOrDefaultAsync(x => x.UserName == user.UserName && x.Password == user.Password || x.Email == user.Email);
 
         public async Task<Usuario> GetByToken(string token) => await _context.Usuario.SingleOrDefaultAsync(x => x.PasswordResetToken == token);
 

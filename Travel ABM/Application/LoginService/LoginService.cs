@@ -1,16 +1,18 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Application.DTO_s;
+using Application.LoginService;
+using Application.Utils;
+using Domain;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Models.Entities;
-using Services.DTO_s;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Numerics;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Utils;
 
 namespace Services.LoginService
 {
@@ -18,26 +20,22 @@ namespace Services.LoginService
     {
         private readonly ILoginRepository _loginRepository;
         private IConfiguration config;
-        private readonly Tools _tools;
-        public LoginService(ILoginRepository loginRepository, IConfiguration configuration, Tools tools)
+        public LoginService(ILoginRepository loginRepository/*, IConfiguration configuration */) //Comento esta seccion ya que No puedo acceder al Iconfiguration desde Test
         {
             _loginRepository = loginRepository;
-            config = configuration;
-            _tools = tools;
+            //config = configuration;
         }
-        public UserCrud Get(UserCrudDto user)
-        {
-            return _loginRepository.Get(user);
-        }
-        
-        public string GenerateToken(UserCrud user)
+        public async Task<Usuario> Get(UserDto user) => await _loginRepository.Get(user);
+
+
+        public async Task<string> GenerateToken(Usuario user)
         {
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email)
             };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("JWT:KEY").Value));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(/*config.GetSection("JWT:KEY").Value*/"super clave secreta para API"));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var securityToken = new JwtSecurityToken(
                                 claims: claims,
@@ -47,48 +45,48 @@ namespace Services.LoginService
             return token;
         }
 
-        public bool ForgotPassword(string email)
+        public async Task<bool> ForgotPassword(string email)
         {
-            var user = _loginRepository.Get(new UserCrudDto { Email = email});
-            if( user == null )
+            var user = await _loginRepository.Get(new UserDto { Email = email });
+            if (user == null)
             {
                 return false;
             }
-            user.PasswordResetToken = _tools.CreateRandomToken();
+            user.PasswordResetToken = Tools.CreateRandomToken();
             user.PasswordResetExpire = DateTime.Now.AddDays(1);
-            _loginRepository.UpdateUserReset(user);
+            await _loginRepository.UpdateUserReset(user);
 
             return true;
         }
-        public bool ResetPassword(ResetPasswordRequestDto request)
+        public async Task<bool> ResetPassword(ResetPasswordRequestDto request)
         {
-            var user = _loginRepository.GetByToken(request.Token);
+            var user = await _loginRepository.GetByToken(request.Token);
             if (user == null || user.PasswordResetExpire < DateTime.Now)
             {
                 return false;
             }
-            _tools.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            Tools.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
             user.PasswordResetToken = null;
             user.PasswordResetExpire = null;
-            _loginRepository.UpdateUserReset(user); 
+            await _loginRepository.UpdateUserReset(user);
 
             return true;
         }
 
-        public Tuple<bool,string> Login(UserCrudDto userRequest)
+        public async Task<Tuple<bool, string>> Login(UserDto userRequest)
         {
-            var user = _loginRepository.Get(userRequest);
+            var user = await _loginRepository.Get(userRequest);
 
             if (user == null)
                 return Tuple.Create(false, "User not found");
-            if (!_tools.VerifyPasswordHash(userRequest.Password, user.PasswordHash, user.PasswordSalt))
+            if (!Tools.VerifyPasswordHash(userRequest.Password, user.PasswordHash, user.PasswordSalt))
                 return Tuple.Create(false, "Password incorrect or user ");
 
             return Tuple.Create(true, "Welcome");
-            
+
 
         }
 

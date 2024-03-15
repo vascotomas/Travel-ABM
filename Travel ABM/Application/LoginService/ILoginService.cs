@@ -9,10 +9,10 @@ namespace Services.LoginService
 {
     public interface ILoginService
     {
-        Task<Domain.Usuario> Get(UserCrudDto user);
+        Task<Domain.Usuario> Get(UserDto user);
         Task<string> GenerateToken(Domain.Usuario user);
         Task<bool> ForgotPassword(string email);
         Task<bool> ResetPassword(ResetPasswordRequestDto request);
-        Task<Tuple<bool, string>> Login(UserCrudDto user);
+        Task<Tuple<bool, string>> Login(UserDto user);
     }
 }

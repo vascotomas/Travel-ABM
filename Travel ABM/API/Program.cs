@@ -30,6 +30,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<ILoginRepository, LoginRepository>();
+builder.Services.AddSingleton<IConfiguration>(configuration);
+
 
 /*builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -43,7 +45,6 @@ builder.Services.AddScoped<ILoginRepository, LoginRepository>();
         };
     });*/
 
-builder.Services.AddScoped<Tools>();
 
 var app = builder.Build();
 

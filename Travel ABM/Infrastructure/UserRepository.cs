@@ -19,10 +19,19 @@ namespace Infrastructure
             _context = context;
         }
 
-        public Task CrearUsuario(Usuario usuario)
+        public async Task<bool> CrearUsuario(Usuario usuario)
         {
-            _context.Usuario.Add(usuario);
-            return _context.SaveChangesAsync();
+            try
+            {
+                _context.Usuario.Add(usuario);
+                return await _context.SaveChangesAsync() > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+           
         }
 
         public async Task<bool> SoftDelete(int id)

@@ -26,8 +26,12 @@ public partial class Usuario
     public string LastName { get; set; }
 
     public DateTime BirthDate { get; set; }
+    [JsonIgnore]
     public string? PasswordResetToken { get; set; }
+    [JsonIgnore]
     public DateTime? PasswordResetExpire { get; set; }
+    [JsonIgnore]
     public byte[] PasswordHash { get; set; }
+    [JsonIgnore]
     public byte[] PasswordSalt { get; set; }
 }

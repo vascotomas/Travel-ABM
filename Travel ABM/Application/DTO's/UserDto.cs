@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.DTO_s
 {
-    public class UserCrudDto
+    public class UserDto
     {
         public string UserName { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;

@@ -1,6 +1,7 @@
 ﻿using Application.Cliente;
 using Application.DTO_s;
 using Application.GestorReservas;
+using Application.User;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Services.LoginService;
@@ -16,6 +17,7 @@ namespace API
             application.MapPost(pattern: "/Reserva", ReservarTour);
             application.MapGet(pattern: "/Reserva", ObtenerReservas);
             application.MapDelete(pattern: "/Reserva", EliminarReserva);
+            application.MapPost(pattern: "/CrearUsuario", CrearUsuario);
         }
         #region endpoints GeneraReserva
         private static async Task<IResult> AgregarTour(Tour tour, IGestorReservasService service)
@@ -83,7 +85,7 @@ namespace API
 
         #region login
         [HttpPost("authenticate")]
-        public static async Task<IResult> Login(ILoginService service, UserCrudDto userDto) 
+        public static async Task<IResult> Login(ILoginService service, UserDto userDto) 
         {
             var user = await service.Get(userDto);
 
@@ -117,13 +119,26 @@ namespace API
         [HttpPost("login")]
         public static async Task<IResult> Login(ILoginService service,string username, string password)
         {
-            var loginResult = await service.Login(new UserCrudDto { UserName = username, Password = password });
+            var loginResult = await service.Login(new UserDto { UserName = username, Password = password });
 
             if (loginResult.Item1 == false)
                 return Results.BadRequest(loginResult.Item2);
 
             return Results.Ok(loginResult.Item2);
 
+        }
+        #endregion
+
+        #region user
+  
+        [HttpPost]
+        public static async Task<IResult> CrearUsuario(IUserService service,Usuario user)
+        {
+            var status = await service.CrearUsuario(user);
+            if(!status)
+                return Results.BadRequest(status.ToString());
+
+            return  Results.Ok();
         }
         #endregion
     }

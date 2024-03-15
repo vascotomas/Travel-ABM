@@ -11,17 +11,15 @@ namespace Application.User
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly Tools _tools;
 
-        public UserService(IUserRepository userCrudRepository, Tools tools)
+        public UserService(IUserRepository userRepository )
         {
-            _userRepository = userCrudRepository;
-            _tools = tools;
+            _userRepository = userRepository;
         }
 
-        public  Task CrearUsuario(Domain.Usuario user)
-        {         
-            _tools.CreatePasswordHash(user.Password, out byte[] passwordHash, out byte[] passwordSalt);
+        public Task<bool> CrearUsuario(Domain.Usuario user)
+        {
+            Tools.CreatePasswordHash(user.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
